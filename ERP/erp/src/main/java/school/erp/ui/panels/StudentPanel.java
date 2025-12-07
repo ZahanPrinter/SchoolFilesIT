@@ -2,6 +2,7 @@ package school.erp.ui.panels;
 
 import school.erp.dao.StudentDAO;
 import school.erp.models.Student;
+import school.erp.ui.components.DarkTableHeaderRenderer;
 import school.erp.ui.components.StyledButton;
 import school.erp.utils.UIConstants;
 import javax.swing.*;
@@ -51,11 +52,10 @@ public class StudentPanel extends JPanel {
         table.setBackground(UIConstants.CARD_BG);
         table.setForeground(UIConstants.TEXT_DARK);
         table.setGridColor(UIConstants.BORDER_COLOR);
-        table.getTableHeader().setFont(UIConstants.BUTTON_FONT);
-        table.getTableHeader().setBackground(UIConstants.TABLE_HEADER);
-        table.getTableHeader().setForeground(UIConstants.TEXT_DARK);
         table.setSelectionBackground(UIConstants.TABLE_SELECTION);
-        table.setSelectionForeground(UIConstants.TEXT_DARK);
+        table.setSelectionForeground(Color.WHITE);
+        table.getTableHeader().setDefaultRenderer(new DarkTableHeaderRenderer());
+        table.getTableHeader().setReorderingAllowed(false);
         
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(new LineBorder(UIConstants.BORDER_COLOR));

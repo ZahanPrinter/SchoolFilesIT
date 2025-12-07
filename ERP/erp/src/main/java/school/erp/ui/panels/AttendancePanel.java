@@ -4,6 +4,7 @@ import school.erp.dao.StudentDAO;
 import school.erp.dao.AttendanceDAO;
 import school.erp.models.Student;
 import school.erp.models.Attendance;
+import school.erp.ui.components.DarkTableHeaderRenderer;
 import school.erp.ui.components.StyledButton;
 import school.erp.utils.UIConstants;
 import javax.swing.*;
@@ -59,11 +60,12 @@ public class AttendancePanel extends JPanel {
         table.setBackground(UIConstants.CARD_BG);
         table.setForeground(UIConstants.TEXT_DARK);
         table.setGridColor(UIConstants.BORDER_COLOR);
-        table.getTableHeader().setFont(UIConstants.BUTTON_FONT);
-        table.getTableHeader().setBackground(UIConstants.TABLE_HEADER);
-        table.getTableHeader().setForeground(UIConstants.TEXT_DARK);
         table.setSelectionBackground(UIConstants.TABLE_SELECTION);
-        table.setSelectionForeground(UIConstants.TEXT_DARK);
+        table.setSelectionForeground(Color.WHITE);
+        
+        // Fix table header with custom renderer
+        table.getTableHeader().setDefaultRenderer(new DarkTableHeaderRenderer());
+        table.getTableHeader().setReorderingAllowed(false);
         
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(new LineBorder(UIConstants.BORDER_COLOR));

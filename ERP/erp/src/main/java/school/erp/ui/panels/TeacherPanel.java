@@ -2,6 +2,7 @@ package school.erp.ui.panels;
 
 import school.erp.dao.TeacherDAO;
 import school.erp.models.Teacher;
+import school.erp.ui.components.DarkTableHeaderRenderer;
 import school.erp.ui.components.StyledButton;
 import school.erp.utils.UIConstants;
 import javax.swing.*;
@@ -36,6 +37,7 @@ public class TeacherPanel extends JPanel {
         headerPanel.add(addBtn, BorderLayout.EAST);
         add(headerPanel, BorderLayout.NORTH);
         
+        // Table
         String[] columns = {"ID", "Name", "Employee ID", "Subject", "Email", "Phone"};
         tableModel = new DefaultTableModel(columns, 0) {
             public boolean isCellEditable(int row, int column) {
@@ -49,11 +51,12 @@ public class TeacherPanel extends JPanel {
         table.setBackground(UIConstants.CARD_BG);
         table.setForeground(UIConstants.TEXT_DARK);
         table.setGridColor(UIConstants.BORDER_COLOR);
-        table.getTableHeader().setFont(UIConstants.BUTTON_FONT);
-        table.getTableHeader().setBackground(UIConstants.TABLE_HEADER);
-        table.getTableHeader().setForeground(UIConstants.TEXT_DARK);
         table.setSelectionBackground(UIConstants.TABLE_SELECTION);
-        table.setSelectionForeground(UIConstants.TEXT_DARK);
+        table.setSelectionForeground(Color.WHITE);
+        
+        // Fix table header with custom renderer
+        table.getTableHeader().setDefaultRenderer(new DarkTableHeaderRenderer());
+        table.getTableHeader().setReorderingAllowed(false);
         
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(new LineBorder(UIConstants.BORDER_COLOR));
