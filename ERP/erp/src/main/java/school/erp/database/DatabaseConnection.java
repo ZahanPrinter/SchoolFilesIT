@@ -7,7 +7,7 @@ public class DatabaseConnection {
     private static Connection conn;
     private static final String URL = "jdbc:mysql://localhost:3306/school_erp";
     private static final String USER = "root";
-    private static final String PASSWORD = ""; // Change this to your MySQL password
+    private static final String PASSWORD = "Fri2005#3";
     
     public static Connection getConnection() {
         if (conn == null) {
