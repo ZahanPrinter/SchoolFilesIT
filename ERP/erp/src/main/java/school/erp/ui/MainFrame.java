@@ -25,6 +25,7 @@ public class MainFrame extends JFrame {
     
     private void initUI() {
         setLayout(new BorderLayout());
+        getContentPane().setBackground(UIConstants.SECONDARY);
         
         // Sidebar
         JPanel sidebar = createSidebar();
@@ -53,26 +54,25 @@ public class MainFrame extends JFrame {
         
         JLabel title = new JLabel("School ERP");
         title.setFont(UIConstants.TITLE_FONT);
-        title.setForeground(Color.WHITE);
+        title.setForeground(UIConstants.ACCENT);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setBorder(new EmptyBorder(0, 0, 30, 0));
         sidebar.add(title);
         
         String[] menuItems = {"Dashboard", "Students", "Teachers", "Courses", "Attendance"};
-        String[] icons = {"📊", "👨‍🎓", "👨‍🏫", "📚", "✓"};
         
         for (int i = 0; i < menuItems.length; i++) {
-            sidebar.add(createMenuButton(menuItems[i], icons[i]));
+            sidebar.add(createMenuButton(menuItems[i]));
             sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
         }
         
         return sidebar;
     }
     
-    private JButton createMenuButton(String text, String icon) {
-        JButton btn = new JButton(icon + "  " + text);
-        btn.setFont(UIConstants.MENU_FONT);
-        btn.setForeground(Color.WHITE);
+    private JButton createMenuButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setFont(new Font("Arial", Font.BOLD, 16));  // Bold for better visibility
+        btn.setForeground(Color.WHITE);  // Pure white text
         btn.setBackground(UIConstants.PRIMARY);
         btn.setBorder(new EmptyBorder(15, 20, 15, 20));
         btn.setFocusPainted(false);
@@ -80,13 +80,18 @@ public class MainFrame extends JFrame {
         btn.setMaximumSize(new Dimension(230, 50));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setHorizontalAlignment(SwingConstants.LEFT);
+        btn.setOpaque(true);
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(true);
         
         btn.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 btn.setBackground(UIConstants.HOVER_PRIMARY);
+                btn.setForeground(UIConstants.ACCENT);  // Bright accent on hover
             }
             public void mouseExited(MouseEvent e) {
                 btn.setBackground(UIConstants.PRIMARY);
+                btn.setForeground(Color.WHITE);
             }
         });
         

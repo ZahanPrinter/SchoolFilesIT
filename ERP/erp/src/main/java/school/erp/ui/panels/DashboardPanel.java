@@ -26,10 +26,10 @@ public class DashboardPanel extends JPanel {
             TeacherDAO teacherDAO = new TeacherDAO();
             CourseDAO courseDAO = new CourseDAO();
             
-            statsPanel.add(new StatCard("Total Students", studentDAO.getStudentCount(), "👨‍🎓"));
-            statsPanel.add(new StatCard("Total Teachers", teacherDAO.getTeacherCount(), "👨‍🏫"));
-            statsPanel.add(new StatCard("Total Courses", courseDAO.getCourseCount(), "📚"));
-            statsPanel.add(new StatCard("Active Classes", 0, "✓"));
+            statsPanel.add(new StatCard("Total Students", studentDAO.getStudentCount()));
+            statsPanel.add(new StatCard("Total Teachers", teacherDAO.getTeacherCount()));
+            statsPanel.add(new StatCard("Total Courses", courseDAO.getCourseCount()));
+            statsPanel.add(new StatCard("Active Classes", 0));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading dashboard: " + e.getMessage());
             e.printStackTrace();

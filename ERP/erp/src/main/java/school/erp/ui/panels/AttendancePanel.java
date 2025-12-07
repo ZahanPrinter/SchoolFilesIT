@@ -38,7 +38,7 @@ public class AttendancePanel extends JPanel {
         header.setFont(UIConstants.HEADER_FONT);
         header.setForeground(UIConstants.TEXT_DARK);
         
-        StyledButton markBtn = new StyledButton("+ Mark Attendance", UIConstants.ACCENT);
+        StyledButton markBtn = new StyledButton("Mark Attendance", UIConstants.SUCCESS);
         markBtn.addActionListener(e -> showMarkAttendanceDialog());
         
         headerPanel.add(header, BorderLayout.WEST);
@@ -56,23 +56,28 @@ public class AttendancePanel extends JPanel {
         table = new JTable(tableModel);
         table.setRowHeight(35);
         table.setFont(UIConstants.TEXT_FONT);
+        table.setBackground(UIConstants.CARD_BG);
+        table.setForeground(UIConstants.TEXT_DARK);
+        table.setGridColor(UIConstants.BORDER_COLOR);
         table.getTableHeader().setFont(UIConstants.BUTTON_FONT);
-        table.getTableHeader().setBackground(UIConstants.PRIMARY);
-        table.getTableHeader().setForeground(Color.WHITE);
-        table.setSelectionBackground(new Color(219, 234, 254));
+        table.getTableHeader().setBackground(UIConstants.TABLE_HEADER);
+        table.getTableHeader().setForeground(UIConstants.TEXT_DARK);
+        table.setSelectionBackground(UIConstants.TABLE_SELECTION);
+        table.setSelectionForeground(UIConstants.TEXT_DARK);
         
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(new LineBorder(UIConstants.BORDER_COLOR));
+        scrollPane.getViewport().setBackground(UIConstants.CARD_BG);
         add(scrollPane, BorderLayout.CENTER);
         
         // Button panel
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         btnPanel.setBackground(UIConstants.SECONDARY);
         
-        StyledButton todayBtn = new StyledButton("Today's Attendance", UIConstants.PRIMARY);
+        StyledButton todayBtn = new StyledButton("Today's Attendance", UIConstants.ACCENT);
         todayBtn.addActionListener(e -> loadTodayAttendance());
         
-        StyledButton allBtn = new StyledButton("All Records", UIConstants.PRIMARY);
+        StyledButton allBtn = new StyledButton("All Records", UIConstants.ACCENT);
         allBtn.addActionListener(e -> loadAllAttendance());
         
         StyledButton deleteBtn = new StyledButton("Delete", UIConstants.DANGER);
@@ -119,15 +124,19 @@ public class AttendancePanel extends JPanel {
     private void showMarkAttendanceDialog() {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
                                      "Mark Attendance", true);
-        dialog.setSize(400, 300);
+        dialog.setSize(450, 300);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout(10, 10));
+        dialog.getContentPane().setBackground(UIConstants.SECONDARY);
         
         JPanel formPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         formPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        formPanel.setBackground(UIConstants.SECONDARY);
         
         // Load students
         studentCombo = new JComboBox<>();
+        studentCombo.setBackground(UIConstants.CARD_BG);
+        studentCombo.setForeground(UIConstants.TEXT_DARK);
         try {
             List<Student> students = studentDAO.getAllStudents();
             for (Student s : students) {
@@ -138,16 +147,20 @@ public class AttendancePanel extends JPanel {
         }
         
         JComboBox<String> statusCombo = new JComboBox<>(new String[]{"Present", "Absent", "Late"});
-        JTextField dateField = new JTextField(LocalDate.now().toString());
+        statusCombo.setBackground(UIConstants.CARD_BG);
+        statusCombo.setForeground(UIConstants.TEXT_DARK);
         
-        formPanel.add(new JLabel("Student:"));
+        JTextField dateField = createStyledTextField();
+        dateField.setText(LocalDate.now().toString());
+        
+        formPanel.add(createLabel("Student:"));
         formPanel.add(studentCombo);
-        formPanel.add(new JLabel("Status:"));
+        formPanel.add(createLabel("Status:"));
         formPanel.add(statusCombo);
-        formPanel.add(new JLabel("Date (YYYY-MM-DD):"));
+        formPanel.add(createLabel("Date (YYYY-MM-DD):"));
         formPanel.add(dateField);
         
-        StyledButton saveBtn = new StyledButton("Mark Attendance", UIConstants.ACCENT);
+        StyledButton saveBtn = new StyledButton("Mark Attendance", UIConstants.SUCCESS);
         saveBtn.addActionListener(e -> {
             try {
                 String selected = (String) studentCombo.getSelectedItem();
@@ -175,11 +188,30 @@ public class AttendancePanel extends JPanel {
         });
         
         JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(UIConstants.SECONDARY);
         btnPanel.add(saveBtn);
         
         dialog.add(formPanel, BorderLayout.CENTER);
         dialog.add(btnPanel, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+    
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setForeground(UIConstants.TEXT_DARK);
+        return label;
+    }
+    
+    private JTextField createStyledTextField() {
+        JTextField field = new JTextField();
+        field.setBackground(UIConstants.CARD_BG);
+        field.setForeground(UIConstants.TEXT_DARK);
+        field.setCaretColor(UIConstants.TEXT_DARK);
+        field.setBorder(BorderFactory.createCompoundBorder(
+            new LineBorder(UIConstants.BORDER_COLOR),
+            new EmptyBorder(5, 5, 5, 5)
+        ));
+        return field;
     }
     
     private void deleteSelected() {

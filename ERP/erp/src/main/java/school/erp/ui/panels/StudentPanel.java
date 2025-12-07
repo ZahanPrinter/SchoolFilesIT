@@ -1,6 +1,5 @@
 package school.erp.ui.panels;
 
-
 import school.erp.dao.StudentDAO;
 import school.erp.models.Student;
 import school.erp.ui.components.StyledButton;
@@ -11,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
-
+    
 public class StudentPanel extends JPanel {
     private StudentDAO studentDAO;
     private DefaultTableModel tableModel;
@@ -31,7 +30,7 @@ public class StudentPanel extends JPanel {
         header.setFont(UIConstants.HEADER_FONT);
         header.setForeground(UIConstants.TEXT_DARK);
         
-        StyledButton addBtn = new StyledButton("+ Add New", UIConstants.ACCENT);
+        StyledButton addBtn = new StyledButton("+ Add New", UIConstants.SUCCESS);
         addBtn.addActionListener(e -> showAddDialog());
         
         headerPanel.add(header, BorderLayout.WEST);
@@ -49,20 +48,25 @@ public class StudentPanel extends JPanel {
         table = new JTable(tableModel);
         table.setRowHeight(35);
         table.setFont(UIConstants.TEXT_FONT);
+        table.setBackground(UIConstants.CARD_BG);
+        table.setForeground(UIConstants.TEXT_DARK);
+        table.setGridColor(UIConstants.BORDER_COLOR);
         table.getTableHeader().setFont(UIConstants.BUTTON_FONT);
-        table.getTableHeader().setBackground(UIConstants.PRIMARY);
-        table.getTableHeader().setForeground(Color.WHITE);
-        table.setSelectionBackground(new Color(219, 234, 254));
+        table.getTableHeader().setBackground(UIConstants.TABLE_HEADER);
+        table.getTableHeader().setForeground(UIConstants.TEXT_DARK);
+        table.setSelectionBackground(UIConstants.TABLE_SELECTION);
+        table.setSelectionForeground(UIConstants.TEXT_DARK);
         
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(new LineBorder(UIConstants.BORDER_COLOR));
+        scrollPane.getViewport().setBackground(UIConstants.CARD_BG);
         add(scrollPane, BorderLayout.CENTER);
         
         // Buttons
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         btnPanel.setBackground(UIConstants.SECONDARY);
         
-        StyledButton refreshBtn = new StyledButton("Refresh", UIConstants.PRIMARY);
+        StyledButton refreshBtn = new StyledButton("Refresh", UIConstants.ACCENT);
         refreshBtn.addActionListener(e -> loadData());
         
         StyledButton deleteBtn = new StyledButton("Delete", UIConstants.DANGER);
@@ -96,31 +100,33 @@ public class StudentPanel extends JPanel {
         dialog.setSize(400, 450);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout(10, 10));
+        dialog.getContentPane().setBackground(UIConstants.SECONDARY);
         
         JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
         formPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        formPanel.setBackground(UIConstants.SECONDARY);
         
-        JTextField nameField = new JTextField();
-        JTextField rollNoField = new JTextField();
-        JTextField classField = new JTextField();
-        JTextField emailField = new JTextField();
-        JTextField phoneField = new JTextField();
-        JTextField addressField = new JTextField();
+        JTextField nameField = createStyledTextField();
+        JTextField rollNoField = createStyledTextField();
+        JTextField classField = createStyledTextField();
+        JTextField emailField = createStyledTextField();
+        JTextField phoneField = createStyledTextField();
+        JTextField addressField = createStyledTextField();
         
-        formPanel.add(new JLabel("Name:"));
+        formPanel.add(createLabel("Name:"));
         formPanel.add(nameField);
-        formPanel.add(new JLabel("Roll No:"));
+        formPanel.add(createLabel("Roll No:"));
         formPanel.add(rollNoField);
-        formPanel.add(new JLabel("Class:"));
+        formPanel.add(createLabel("Class:"));
         formPanel.add(classField);
-        formPanel.add(new JLabel("Email:"));
+        formPanel.add(createLabel("Email:"));
         formPanel.add(emailField);
-        formPanel.add(new JLabel("Phone:"));
+        formPanel.add(createLabel("Phone:"));
         formPanel.add(phoneField);
-        formPanel.add(new JLabel("Address:"));
+        formPanel.add(createLabel("Address:"));
         formPanel.add(addressField);
         
-        StyledButton saveBtn = new StyledButton("Save", UIConstants.ACCENT);
+        StyledButton saveBtn = new StyledButton("Save", UIConstants.SUCCESS);
         saveBtn.addActionListener(e -> {
             try {
                 Student student = new Student();
@@ -141,11 +147,30 @@ public class StudentPanel extends JPanel {
         });
         
         JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(UIConstants.SECONDARY);
         btnPanel.add(saveBtn);
         
         dialog.add(formPanel, BorderLayout.CENTER);
         dialog.add(btnPanel, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+    
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setForeground(UIConstants.TEXT_DARK);
+        return label;
+    }
+    
+    private JTextField createStyledTextField() {
+        JTextField field = new JTextField();
+        field.setBackground(UIConstants.CARD_BG);
+        field.setForeground(UIConstants.TEXT_DARK);
+        field.setCaretColor(UIConstants.TEXT_DARK);
+        field.setBorder(BorderFactory.createCompoundBorder(
+            new LineBorder(UIConstants.BORDER_COLOR),
+            new EmptyBorder(5, 5, 5, 5)
+        ));
+        return field;
     }
     
     private void deleteSelected() {
