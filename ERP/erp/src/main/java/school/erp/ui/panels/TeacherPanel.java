@@ -4,6 +4,8 @@ import school.erp.dao.TeacherDAO;
 import school.erp.models.Teacher;
 import school.erp.ui.components.*;
 import school.erp.utils.UIConstants;
+import school.erp.utils.ValidationUtils;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -79,64 +81,75 @@ public class TeacherPanel extends JPanel {
     }
     
     private void showAddDialog() {
-        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
-                                     "Add New Teacher", true);
-        dialog.setSize(450, 500);
-        dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout(15, 15));
-        dialog.getContentPane().setBackground(UIConstants.SECONDARY);
+    JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
+                                 "Add New Teacher", true);
+    dialog.setSize(450, 500);
+    dialog.setLocationRelativeTo(this);
+    dialog.setLayout(new BorderLayout(15, 15));
+    dialog.getContentPane().setBackground(UIConstants.SECONDARY);
+    
+    JPanel formPanel = new JPanel(new GridLayout(6, 2, 15, 15));
+    formPanel.setBorder(new EmptyBorder(25, 25, 25, 25));
+    formPanel.setBackground(UIConstants.SECONDARY);
+    
+    DarkTextField nameField = new DarkTextField();
+    DarkTextField empIdField = new DarkTextField();
+    DarkTextField subjectField = new DarkTextField();
+    DarkTextField emailField = new DarkTextField();
+    DarkTextField phoneField = new DarkTextField();
+    DarkTextField qualField = new DarkTextField();
+    
+    formPanel.add(createLabel("Name:"));
+    formPanel.add(nameField);
+    formPanel.add(createLabel("Employee ID:"));
+    formPanel.add(empIdField);
+    formPanel.add(createLabel("Subject:"));
+    formPanel.add(subjectField);
+    formPanel.add(createLabel("Email:"));
+    formPanel.add(emailField);
+    formPanel.add(createLabel("Phone (10 digits):"));
+    formPanel.add(phoneField);
+    formPanel.add(createLabel("Qualification:"));
+    formPanel.add(qualField);
+    
+    DarkButton saveBtn = new DarkButton("Save", UIConstants.SUCCESS);
+    saveBtn.addActionListener(e -> {
+        // Validate inputs
+        if (!ValidationUtils.validateTeacherForm(
+                nameField.getText(),
+                empIdField.getText(),
+                subjectField.getText(),
+                emailField.getText(),
+                phoneField.getText(),
+                dialog)) {
+            return; // Validation failed
+        }
         
-        JPanel formPanel = new JPanel(new GridLayout(6, 2, 15, 15));
-        formPanel.setBorder(new EmptyBorder(25, 25, 25, 25));
-        formPanel.setBackground(UIConstants.SECONDARY);
-        
-        DarkTextField nameField = new DarkTextField();
-        DarkTextField empIdField = new DarkTextField();
-        DarkTextField subjectField = new DarkTextField();
-        DarkTextField emailField = new DarkTextField();
-        DarkTextField phoneField = new DarkTextField();
-        DarkTextField qualField = new DarkTextField();
-        
-        formPanel.add(createLabel("Name:"));
-        formPanel.add(nameField);
-        formPanel.add(createLabel("Employee ID:"));
-        formPanel.add(empIdField);
-        formPanel.add(createLabel("Subject:"));
-        formPanel.add(subjectField);
-        formPanel.add(createLabel("Email:"));
-        formPanel.add(emailField);
-        formPanel.add(createLabel("Phone:"));
-        formPanel.add(phoneField);
-        formPanel.add(createLabel("Qualification:"));
-        formPanel.add(qualField);
-        
-        DarkButton saveBtn = new DarkButton("Save", UIConstants.SUCCESS);
-        saveBtn.addActionListener(e -> {
-            try {
-                Teacher teacher = new Teacher();
-                teacher.setName(nameField.getText());
-                teacher.setEmployeeId(empIdField.getText());
-                teacher.setSubject(subjectField.getText());
-                teacher.setEmail(emailField.getText());
-                teacher.setPhone(phoneField.getText());
-                teacher.setQualification(qualField.getText());
-                
-                teacherDAO.addTeacher(teacher);
-                JOptionPane.showMessageDialog(dialog, "Teacher added successfully!");
-                loadData();
-                dialog.dispose();
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(dialog, "Error: " + ex.getMessage());
-            }
-        });
-        
-        JPanel btnPanel = new JPanel();
-        btnPanel.setBackground(UIConstants.SECONDARY);
-        btnPanel.add(saveBtn);
-        
-        dialog.add(formPanel, BorderLayout.CENTER);
-        dialog.add(btnPanel, BorderLayout.SOUTH);
-        dialog.setVisible(true);
+        try {
+            Teacher teacher = new Teacher();
+            teacher.setName(nameField.getText().trim());
+            teacher.setEmployeeId(empIdField.getText().trim());
+            teacher.setSubject(subjectField.getText().trim());
+            teacher.setEmail(emailField.getText().trim());
+            teacher.setPhone(phoneField.getText().trim());
+            teacher.setQualification(qualField.getText().trim());
+            
+            teacherDAO.addTeacher(teacher);
+            JOptionPane.showMessageDialog(dialog, "Teacher added successfully!");
+            loadData();
+            dialog.dispose();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(dialog, "Database Error: " + ex.getMessage());
+        }
+    });
+    
+    JPanel btnPanel = new JPanel();
+    btnPanel.setBackground(UIConstants.SECONDARY);
+    btnPanel.add(saveBtn);
+    
+    dialog.add(formPanel, BorderLayout.CENTER);
+    dialog.add(btnPanel, BorderLayout.SOUTH);
+    dialog.setVisible(true);
     }
     
     private JLabel createLabel(String text) {

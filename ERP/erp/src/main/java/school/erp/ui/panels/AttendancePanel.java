@@ -60,7 +60,7 @@ public class AttendancePanel extends JPanel {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         btnPanel.setBackground(UIConstants.SECONDARY);
         
-        DarkButton todayBtn = new DarkButton("Today's Attendance", UIConstants.ACCENT);
+        DarkButton todayBtn = new DarkButton("Today's Records", UIConstants.ACCENT);
         todayBtn.addActionListener(e -> loadTodayAttendance());
         
         DarkButton allBtn = new DarkButton("All Records", UIConstants.ACCENT);
@@ -110,13 +110,36 @@ public class AttendancePanel extends JPanel {
     private void showMarkAttendanceDialog() {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
                                      "Mark Attendance", true);
-        dialog.setSize(450, 350);
+        dialog.setSize(600, 550);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout(15, 15));
         dialog.getContentPane().setBackground(UIConstants.SECONDARY);
         
-        JPanel formPanel = new JPanel(new GridLayout(3, 2, 15, 15));
-        formPanel.setBorder(new EmptyBorder(25, 25, 25, 25));
+        // Main content panel
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBackground(UIConstants.SECONDARY);
+        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        
+        // Calendar Panel
+        DarkDatePicker datePicker = new DarkDatePicker();
+        datePicker.setPreferredSize(new Dimension(550, 280));
+        
+        JLabel selectedDateLabel = new JLabel("Selected Date: " + LocalDate.now());
+        selectedDateLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        selectedDateLabel.setForeground(UIConstants.TEXT_DARK);
+        selectedDateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        datePicker.addDateSelectionListener(date -> {
+            selectedDateLabel.setText("Selected Date: " + date);
+        });
+        
+        JPanel calendarPanel = new JPanel(new BorderLayout(10, 10));
+        calendarPanel.setBackground(UIConstants.SECONDARY);
+        calendarPanel.add(selectedDateLabel, BorderLayout.NORTH);
+        calendarPanel.add(datePicker, BorderLayout.CENTER);
+        
+        // Form Panel
+        JPanel formPanel = new JPanel(new GridLayout(2, 2, 15, 15));
         formPanel.setBackground(UIConstants.SECONDARY);
         
         // Load students
@@ -132,17 +155,16 @@ public class AttendancePanel extends JPanel {
         
         DarkComboBox<String> statusCombo = new DarkComboBox<>(new String[]{"Present", "Absent", "Late"});
         
-        DarkTextField dateField = new DarkTextField();
-        dateField.setText(LocalDate.now().toString());
-        
         formPanel.add(createLabel("Student:"));
         formPanel.add(studentCombo);
         formPanel.add(createLabel("Status:"));
         formPanel.add(statusCombo);
-        formPanel.add(createLabel("Date (YYYY-MM-DD):"));
-        formPanel.add(dateField);
+        
+        mainPanel.add(calendarPanel, BorderLayout.NORTH);
+        mainPanel.add(formPanel, BorderLayout.CENTER);
         
         DarkButton saveBtn = new DarkButton("Mark Attendance", UIConstants.SUCCESS);
+        saveBtn.setPreferredSize(new Dimension(150, 40));
         saveBtn.addActionListener(e -> {
             try {
                 String selected = (String) studentCombo.getSelectedItem();
@@ -153,18 +175,19 @@ public class AttendancePanel extends JPanel {
                 
                 int studentId = Integer.parseInt(selected.split(" - ")[0]);
                 String status = (String) statusCombo.getSelectedItem();
-                Date date = Date.valueOf(dateField.getText());
+                LocalDate selectedDate = datePicker.getSelectedDate();
+                Date sqlDate = Date.valueOf(selectedDate);
                 
                 Attendance attendance = new Attendance();
                 attendance.setStudentId(studentId);
                 attendance.setStatus(status);
-                attendance.setDate(date);
+                attendance.setDate(sqlDate);
                 
                 attendanceDAO.markAttendance(attendance);
                 JOptionPane.showMessageDialog(dialog, "Attendance marked successfully!");
                 loadTodayAttendance();
                 dialog.dispose();
-            } catch (SQLException | IllegalArgumentException ex) {
+            } catch (SQLException | NumberFormatException ex) {
                 JOptionPane.showMessageDialog(dialog, "Error: " + ex.getMessage());
             }
         });
@@ -173,7 +196,7 @@ public class AttendancePanel extends JPanel {
         btnPanel.setBackground(UIConstants.SECONDARY);
         btnPanel.add(saveBtn);
         
-        dialog.add(formPanel, BorderLayout.CENTER);
+        dialog.add(mainPanel, BorderLayout.CENTER);
         dialog.add(btnPanel, BorderLayout.SOUTH);
         dialog.setVisible(true);
     }
