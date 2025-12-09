@@ -14,7 +14,7 @@ public class StyledButton extends JButton {
         super(text);
         this.originalColor = bgColor;
         setFont(UIConstants.BUTTON_FONT);
-        setForeground(Color.WHITE);
+        setForeground(Color.BLACK);
         setBackground(bgColor);
         setBorder(new EmptyBorder(10, 20, 10, 20));
         setFocusPainted(false);
