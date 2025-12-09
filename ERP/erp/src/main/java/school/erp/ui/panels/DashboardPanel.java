@@ -18,7 +18,7 @@ public class DashboardPanel extends JPanel {
         header.setForeground(UIConstants.TEXT_DARK);
         add(header, BorderLayout.NORTH);
         
-        JPanel statsPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+        JPanel statsPanel = new JPanel(new GridLayout(1, 3, 20, 20));
         statsPanel.setBackground(UIConstants.SECONDARY);
         
         try {
@@ -29,7 +29,6 @@ public class DashboardPanel extends JPanel {
             statsPanel.add(new StatCard("Total Students", studentDAO.getStudentCount()));
             statsPanel.add(new StatCard("Total Teachers", teacherDAO.getTeacherCount()));
             statsPanel.add(new StatCard("Total Courses", courseDAO.getCourseCount()));
-            statsPanel.add(new StatCard("Active Classes", 0));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading dashboard: " + e.getMessage());
             e.printStackTrace();
