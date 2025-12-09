@@ -2,11 +2,10 @@ package school.erp.ui.panels;
 
 import school.erp.dao.CourseDAO;
 import school.erp.models.Course;
-import school.erp.ui.components.DarkTableHeaderRenderer;
-import school.erp.ui.components.StyledButton;
+import school.erp.ui.components.*;
 import school.erp.utils.UIConstants;
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
@@ -15,7 +14,7 @@ import java.util.List;
 public class CoursePanel extends JPanel {
     private CourseDAO courseDAO;
     private DefaultTableModel tableModel;
-    private JTable table;
+    private DarkTable table;
     
     public CoursePanel() {
         courseDAO = new CourseDAO();
@@ -30,7 +29,7 @@ public class CoursePanel extends JPanel {
         header.setFont(UIConstants.HEADER_FONT);
         header.setForeground(UIConstants.TEXT_DARK);
         
-        StyledButton addBtn = new StyledButton("Add New", UIConstants.SUCCESS);
+        DarkButton addBtn = new DarkButton("Add New", UIConstants.SUCCESS);
         addBtn.addActionListener(e -> showAddDialog());
         
         headerPanel.add(header, BorderLayout.WEST);
@@ -44,31 +43,17 @@ public class CoursePanel extends JPanel {
             }
         };
         
-        table = new JTable(tableModel);
-        table.setRowHeight(35);
-        table.setFont(UIConstants.TEXT_FONT);
-        table.setBackground(UIConstants.CARD_BG);
-        table.setForeground(UIConstants.TEXT_DARK);
-        table.setGridColor(UIConstants.BORDER_COLOR);
-        table.setSelectionBackground(UIConstants.TABLE_SELECTION);
-        table.setSelectionForeground(Color.WHITE);
-        
-        // Fix table header with custom renderer
-        table.getTableHeader().setDefaultRenderer(new DarkTableHeaderRenderer());
-        table.getTableHeader().setReorderingAllowed(false);
-        
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(new LineBorder(UIConstants.BORDER_COLOR));
-        scrollPane.getViewport().setBackground(UIConstants.CARD_BG);
+        table = new DarkTable(tableModel);
+        DarkScrollPane scrollPane = new DarkScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
         
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         btnPanel.setBackground(UIConstants.SECONDARY);
         
-        StyledButton refreshBtn = new StyledButton("Refresh", UIConstants.ACCENT);
+        DarkButton refreshBtn = new DarkButton("Refresh", UIConstants.ACCENT);
         refreshBtn.addActionListener(e -> loadData());
         
-        StyledButton deleteBtn = new StyledButton("Delete", UIConstants.DANGER);
+        DarkButton deleteBtn = new DarkButton("Delete", UIConstants.DANGER);
         deleteBtn.addActionListener(e -> deleteSelected());
         
         btnPanel.add(refreshBtn);
@@ -96,19 +81,19 @@ public class CoursePanel extends JPanel {
     private void showAddDialog() {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
                                      "Add New Course", true);
-        dialog.setSize(400, 350);
+        dialog.setSize(450, 400);
         dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout(10, 10));
+        dialog.setLayout(new BorderLayout(15, 15));
         dialog.getContentPane().setBackground(UIConstants.SECONDARY);
         
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-        formPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 15, 15));
+        formPanel.setBorder(new EmptyBorder(25, 25, 25, 25));
         formPanel.setBackground(UIConstants.SECONDARY);
         
-        JTextField nameField = createStyledTextField();
-        JTextField codeField = createStyledTextField();
-        JTextField teacherIdField = createStyledTextField();
-        JTextField creditsField = createStyledTextField();
+        DarkTextField nameField = new DarkTextField();
+        DarkTextField codeField = new DarkTextField();
+        DarkTextField teacherIdField = new DarkTextField();
+        DarkTextField creditsField = new DarkTextField();
         
         formPanel.add(createLabel("Course Name:"));
         formPanel.add(nameField);
@@ -119,7 +104,7 @@ public class CoursePanel extends JPanel {
         formPanel.add(createLabel("Credits:"));
         formPanel.add(creditsField);
         
-        StyledButton saveBtn = new StyledButton("Save", UIConstants.SUCCESS);
+        DarkButton saveBtn = new DarkButton("Save", UIConstants.SUCCESS);
         saveBtn.addActionListener(e -> {
             try {
                 Course course = new Course();
@@ -149,19 +134,8 @@ public class CoursePanel extends JPanel {
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(UIConstants.TEXT_DARK);
+        label.setFont(new Font("Arial", Font.PLAIN, 14));
         return label;
-    }
-    
-    private JTextField createStyledTextField() {
-        JTextField field = new JTextField();
-        field.setBackground(UIConstants.CARD_BG);
-        field.setForeground(UIConstants.TEXT_DARK);
-        field.setCaretColor(UIConstants.TEXT_DARK);
-        field.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(UIConstants.BORDER_COLOR),
-            new EmptyBorder(5, 5, 5, 5)
-        ));
-        return field;
     }
     
     private void deleteSelected() {

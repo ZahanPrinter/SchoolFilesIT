@@ -4,11 +4,10 @@ import school.erp.dao.StudentDAO;
 import school.erp.dao.AttendanceDAO;
 import school.erp.models.Student;
 import school.erp.models.Attendance;
-import school.erp.ui.components.DarkTableHeaderRenderer;
-import school.erp.ui.components.StyledButton;
+import school.erp.ui.components.*;
 import school.erp.utils.UIConstants;
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.Date;
@@ -20,8 +19,7 @@ public class AttendancePanel extends JPanel {
     private AttendanceDAO attendanceDAO;
     private StudentDAO studentDAO;
     private DefaultTableModel tableModel;
-    private JTable table;
-    private JComboBox<String> studentCombo;
+    private DarkTable table;
     
     public AttendancePanel() {
         attendanceDAO = new AttendanceDAO();
@@ -39,7 +37,7 @@ public class AttendancePanel extends JPanel {
         header.setFont(UIConstants.HEADER_FONT);
         header.setForeground(UIConstants.TEXT_DARK);
         
-        StyledButton markBtn = new StyledButton("Mark Attendance", UIConstants.SUCCESS);
+        DarkButton markBtn = new DarkButton("Mark Attendance", UIConstants.SUCCESS);
         markBtn.addActionListener(e -> showMarkAttendanceDialog());
         
         headerPanel.add(header, BorderLayout.WEST);
@@ -54,35 +52,21 @@ public class AttendancePanel extends JPanel {
             }
         };
         
-        table = new JTable(tableModel);
-        table.setRowHeight(35);
-        table.setFont(UIConstants.TEXT_FONT);
-        table.setBackground(UIConstants.CARD_BG);
-        table.setForeground(UIConstants.TEXT_DARK);
-        table.setGridColor(UIConstants.BORDER_COLOR);
-        table.setSelectionBackground(UIConstants.TABLE_SELECTION);
-        table.setSelectionForeground(Color.WHITE);
-        
-        // Fix table header with custom renderer
-        table.getTableHeader().setDefaultRenderer(new DarkTableHeaderRenderer());
-        table.getTableHeader().setReorderingAllowed(false);
-        
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(new LineBorder(UIConstants.BORDER_COLOR));
-        scrollPane.getViewport().setBackground(UIConstants.CARD_BG);
+        table = new DarkTable(tableModel);
+        DarkScrollPane scrollPane = new DarkScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
         
         // Button panel
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         btnPanel.setBackground(UIConstants.SECONDARY);
         
-        StyledButton todayBtn = new StyledButton("Today's Attendance", UIConstants.ACCENT);
+        DarkButton todayBtn = new DarkButton("Today's Attendance", UIConstants.ACCENT);
         todayBtn.addActionListener(e -> loadTodayAttendance());
         
-        StyledButton allBtn = new StyledButton("All Records", UIConstants.ACCENT);
+        DarkButton allBtn = new DarkButton("All Records", UIConstants.ACCENT);
         allBtn.addActionListener(e -> loadAllAttendance());
         
-        StyledButton deleteBtn = new StyledButton("Delete", UIConstants.DANGER);
+        DarkButton deleteBtn = new DarkButton("Delete", UIConstants.DANGER);
         deleteBtn.addActionListener(e -> deleteSelected());
         
         btnPanel.add(todayBtn);
@@ -126,19 +110,17 @@ public class AttendancePanel extends JPanel {
     private void showMarkAttendanceDialog() {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
                                      "Mark Attendance", true);
-        dialog.setSize(450, 300);
+        dialog.setSize(450, 350);
         dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout(10, 10));
+        dialog.setLayout(new BorderLayout(15, 15));
         dialog.getContentPane().setBackground(UIConstants.SECONDARY);
         
-        JPanel formPanel = new JPanel(new GridLayout(3, 2, 10, 10));
-        formPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        JPanel formPanel = new JPanel(new GridLayout(3, 2, 15, 15));
+        formPanel.setBorder(new EmptyBorder(25, 25, 25, 25));
         formPanel.setBackground(UIConstants.SECONDARY);
         
         // Load students
-        studentCombo = new JComboBox<>();
-        studentCombo.setBackground(UIConstants.CARD_BG);
-        studentCombo.setForeground(UIConstants.TEXT_DARK);
+        DarkComboBox<String> studentCombo = new DarkComboBox<>();
         try {
             List<Student> students = studentDAO.getAllStudents();
             for (Student s : students) {
@@ -148,11 +130,9 @@ public class AttendancePanel extends JPanel {
             JOptionPane.showMessageDialog(dialog, "Error loading students: " + e.getMessage());
         }
         
-        JComboBox<String> statusCombo = new JComboBox<>(new String[]{"Present", "Absent", "Late"});
-        statusCombo.setBackground(UIConstants.CARD_BG);
-        statusCombo.setForeground(UIConstants.TEXT_DARK);
+        DarkComboBox<String> statusCombo = new DarkComboBox<>(new String[]{"Present", "Absent", "Late"});
         
-        JTextField dateField = createStyledTextField();
+        DarkTextField dateField = new DarkTextField();
         dateField.setText(LocalDate.now().toString());
         
         formPanel.add(createLabel("Student:"));
@@ -162,7 +142,7 @@ public class AttendancePanel extends JPanel {
         formPanel.add(createLabel("Date (YYYY-MM-DD):"));
         formPanel.add(dateField);
         
-        StyledButton saveBtn = new StyledButton("Mark Attendance", UIConstants.SUCCESS);
+        DarkButton saveBtn = new DarkButton("Mark Attendance", UIConstants.SUCCESS);
         saveBtn.addActionListener(e -> {
             try {
                 String selected = (String) studentCombo.getSelectedItem();
@@ -201,19 +181,8 @@ public class AttendancePanel extends JPanel {
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(UIConstants.TEXT_DARK);
+        label.setFont(new Font("Arial", Font.PLAIN, 14));
         return label;
-    }
-    
-    private JTextField createStyledTextField() {
-        JTextField field = new JTextField();
-        field.setBackground(UIConstants.CARD_BG);
-        field.setForeground(UIConstants.TEXT_DARK);
-        field.setCaretColor(UIConstants.TEXT_DARK);
-        field.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(UIConstants.BORDER_COLOR),
-            new EmptyBorder(5, 5, 5, 5)
-        ));
-        return field;
     }
     
     private void deleteSelected() {
