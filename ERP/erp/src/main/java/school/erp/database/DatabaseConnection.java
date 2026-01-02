@@ -37,7 +37,7 @@ public class DatabaseConnection {
             stmt.execute("CREATE TABLE IF NOT EXISTS students (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY," +
                 "name VARCHAR(100) NOT NULL," +
-                "roll_no VARCHAR(20) UNIQUE NOT NULL," +
+                "roll_no VARCHAR(20) NOT NULL," +
                 "class VARCHAR(20)," +
                 "email VARCHAR(100)," +
                 "phone VARCHAR(15)," +

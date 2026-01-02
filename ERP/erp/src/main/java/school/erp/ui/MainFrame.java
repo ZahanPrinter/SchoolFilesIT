@@ -31,7 +31,7 @@ public class MainFrame extends JFrame {
         JPanel sidebar = createSidebar();
         add(sidebar, BorderLayout.WEST);
         
-        // Main content area with CardLayout
+        // Main content area
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         mainPanel.setBackground(UIConstants.SECONDARY);
@@ -71,8 +71,8 @@ public class MainFrame extends JFrame {
     
     private JButton createMenuButton(String text) {
         JButton btn = new JButton(text);
-        btn.setFont(new Font("Arial", Font.BOLD, 16));  // Bold for better visibility
-        btn.setForeground(Color.WHITE);  // Pure white text
+        btn.setFont(new Font("Arial", Font.BOLD, 16));
+        btn.setForeground(Color.WHITE); 
         btn.setBackground(UIConstants.PRIMARY);
         btn.setBorder(new EmptyBorder(15, 20, 15, 20));
         btn.setFocusPainted(false);
@@ -87,7 +87,7 @@ public class MainFrame extends JFrame {
         btn.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 btn.setBackground(UIConstants.HOVER_PRIMARY);
-                btn.setForeground(UIConstants.ACCENT);  // Bright accent on hover
+                btn.setForeground(UIConstants.ACCENT);
             }
             public void mouseExited(MouseEvent e) {
                 btn.setBackground(UIConstants.PRIMARY);
